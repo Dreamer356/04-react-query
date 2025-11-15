@@ -1,6 +1,6 @@
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import type { Movie } from "../../types/movie";
+import type {Movie} from "../../types/movie";
 import styles from "./MovieModal.module.css";
 
 interface MovieModalProps {
@@ -11,38 +11,30 @@ interface MovieModalProps {
 const modalRoot = document.getElementById("modal-root") as HTMLElement;
 
 const MovieModal = ({ movie, onClose }: MovieModalProps) => {
-  // Закрытие по Escape
-  const handleEsc = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose]
-  );
-
   useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+
     document.addEventListener("keydown", handleEsc);
-    document.body.style.overflow = "hidden"; // блок скролла фона
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", handleEsc);
       document.body.style.overflow = "";
     };
-  }, [handleEsc]);
+  }, [onClose]);
 
-  // Закрытие по клику вне контента
-  const handleBackdropClick = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };
 
   return createPortal(
     <div
       className={styles.backdrop}
-      onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="movie-title"
+      onClick={handleBackdropClick}
     >
       <div className={styles.modal}>
         <button
@@ -55,22 +47,19 @@ const MovieModal = ({ movie, onClose }: MovieModalProps) => {
 
         <img
           src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-          alt={`${movie.title} backdrop`}
+          alt={movie.title}
           className={styles.image}
-          loading="lazy"
         />
 
         <div className={styles.content}>
-          <h2 id="movie-title">{movie.title}</h2>
+          <h2>{movie.title}</h2>
           <p>{movie.overview}</p>
-          <ul className={styles.details}>
-            <li>
-              <strong>Release Date:</strong> {movie.release_date}
-            </li>
-            <li>
-              <strong>Rating:</strong> {movie.vote_average} / 10
-            </li>
-          </ul>
+          <p>
+            <strong>Release Date:</strong> {movie.release_date}
+          </p>
+          <p>
+            <strong>Rating:</strong> {movie.vote_average}/10
+          </p>
         </div>
       </div>
     </div>,

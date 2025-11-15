@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+
 import toast from "react-hot-toast";
 import style from "./SearchBar.module.css";
 
@@ -7,19 +7,16 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ onSubmit }: SearchBarProps) => {
-  const handleFormAction = useCallback(
-    (formData: FormData) => {
-      const query = (formData.get("query") as string)?.trim() || "";
+  const handleFormAction = (formData: FormData) => {
+    const query = (formData.get("query") as string).trim();
 
-      if (!query) {
-        toast.error("Please enter your search query.");
-        return;
-      }
+    if (!query) {
+      toast.error("Please enter your search query.");
+      return;
+    }
 
-      onSubmit(query);
-    },
-    [onSubmit]
-  );
+    onSubmit(query);
+  };
 
   return (
     <header className={style.header}>
