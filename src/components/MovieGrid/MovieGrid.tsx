@@ -1,0 +1,1 @@
+// Movie grid component
