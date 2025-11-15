@@ -1,25 +1,31 @@
-import type { Movie } from '../../types/movie'
-import styles from './MovieGrid.module.css'
+import type  {Movie}  from '../../types/movie';
+import styles from './MovieGrid.module.css';
 
 interface MovieGridProps {
-  movies: Movie[]
-  onSelect: (movie: Movie) => void
+  movies: Movie[];
+  onSelect: (movie: Movie) => void;
 }
 
-const MovieGrid = ({ movies, onSelect }: MovieGridProps) => {
-  if (!movies.length) return null
+ const MovieGrid = ({ movies, onSelect }: MovieGridProps) => {
+  if (movies.length === 0) return null;
+
   return (
     <ul className={styles.grid}>
-      {movies.map((m) => (
-        <li key={m.id}>
-          <article className={styles.card} onClick={() => onSelect(m)} role="button" tabIndex={0} onKeyDown={(e)=>{ if(e.key==='Enter') onSelect(m) }}>
-            <img className={styles.image} src={m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image'} alt={m.title} loading="lazy" />
-            <h3 className={styles.title}>{m.title}</h3>
-          </article>
+      {movies.map(movie => (
+        <li key={movie.id}>
+          <div className={styles.card} onClick={() => onSelect(movie)}>
+            <img
+              className={styles.image}
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              loading="lazy"
+            />
+            <h2 className={styles.title}>{movie.title}</h2>
+          </div>
         </li>
       ))}
     </ul>
-  )
-}
+  );
+};
 
 export default MovieGrid
