@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import ReactPaginate from "react-paginate";
 
 import SearchBar from "../SearchBar/SearchBar";
 import MovieGrid from "../MovieGrid/MovieGrid";
@@ -11,6 +10,7 @@ import MovieModal from "../MovieModal/MovieModal";
 import { useMovies } from "../../services/useMovies";
 import type { Movie } from "../../types/movie";
 
+import ReactPaginate from "react-paginate";
 import styles from "./App.module.css";
 
 const App = () => {
@@ -19,23 +19,28 @@ const App = () => {
   const [page, setPage] = useState(1);
 
   const { data, isLoading, isError } = useMovies(query, page);
+
   const movies = data?.results ?? [];
   const totalPages = data?.total_pages ?? 1;
 
-  const handleSearch = useCallback((value: string) => {
+  const handleSearch = (value: string): void => {
     setQuery(value);
     setPage(1);
-  }, []);
+  };
 
-  const handleMovieSelect = (movie: Movie) => setSelectedMovie(movie);
-  const closeModal = () => setSelectedMovie(null);
+  const handleSelect = (movie: Movie): void => {
+    setSelectedMovie(movie);
+  };
+
+  const handleCloseModal = (): void => {
+    setSelectedMovie(null);
+  };
 
   useEffect(() => {
-    if (!isLoading && !isError && query && movies.length === 0) {
-      toast.error("No movies found for your request.");
-    }
-  }, [isLoading, isError, query, movies.length]);
-
+  if (!isLoading && !isError && query !== "" && movies.length === 0) {
+    toast.error("No movies found for your request.");
+  }
+}, [isLoading, isError, query, movies.length]);
   return (
     <div className={styles.app}>
       <SearchBar onSubmit={handleSearch} />
@@ -43,11 +48,11 @@ const App = () => {
       <main>
         {isLoading && <Loader />}
 
-        {!isLoading && isError && <ErrorMessage />}
+        {isError && !isLoading && <ErrorMessage />}
 
         {!isLoading && !isError && movies.length > 0 && (
           <>
-            {totalPages > 1 && (
+           {totalPages > 1 && (
               <ReactPaginate
                 pageCount={totalPages}
                 pageRangeDisplayed={5}
@@ -60,12 +65,12 @@ const App = () => {
                 previousLabel="←"
               />
             )}
-            <MovieGrid movies={movies} onSelect={handleMovieSelect} />
+            <MovieGrid movies={movies} onSelect={handleSelect} />
           </>
         )}
 
         {selectedMovie && (
-          <MovieModal movie={selectedMovie} onClose={closeModal} />
+          <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
         )}
       </main>
 
