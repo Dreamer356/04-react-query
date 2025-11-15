@@ -1,7 +1,9 @@
-import styles from './Loader.module.css';
+import styles from './Loader.module.css'
 
- const Loader = () => {
-  return <p className={styles.text}>Loading movies, please wait...</p>;
-};
+interface LoaderProps { message?: string }
+
+const Loader = ({ message = 'Loading movies, please wait...' }: LoaderProps) => {
+  return <p className={styles.text}>{message}</p>
+}
 
 export default Loader
